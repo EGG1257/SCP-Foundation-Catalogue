@@ -42,7 +42,6 @@ namespace SCP_Foundation_Catalogue
                 }
             }
 
-            PrintRelationships();
             Console.WriteLine("  └─");
         }
 
