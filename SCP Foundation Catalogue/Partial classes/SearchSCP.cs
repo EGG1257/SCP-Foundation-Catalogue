@@ -29,5 +29,37 @@ namespace SCP_Foundation_Catalogue
                 entry.PrintInfo(detailed: false);
 
         }
+
+        static void DeleteSCP(string id)
+        {
+            id = id.ToUpper().Trim();
+            SCPEntry entry = registry.Get(id);
+
+            if (entry == null)
+            {
+                Console.WriteLine($"ERR_NOT_FOUND: {id} does not exist in the registry.");
+                return;
+            }
+
+            // Confirm before deleting
+            Console.Write($"Are you sure you want to delete {id}: {entry.Name}? This cannot be undone. (y/n)\n> ");
+            string confirm = Console.ReadLine()?.Trim().ToLower();
+
+            if (confirm != "y")
+            {
+                Console.WriteLine("Delete cancelled.");
+                return;
+            }
+
+            // Remove from registry
+            registry.Remove(id);
+
+            // Delete the folder and everything in it
+            string folderPath = Path.Combine("SCPDatabase", id);
+            if (Directory.Exists(folderPath))
+                Directory.Delete(folderPath, recursive: true); // recursive deletes all files inside too
+
+            Console.WriteLine($"SUCCESS: {id} has been deleted.");
+        }
     }
 }

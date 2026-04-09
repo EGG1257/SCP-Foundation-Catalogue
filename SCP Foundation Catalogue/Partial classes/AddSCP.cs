@@ -77,13 +77,13 @@ namespace SCP_Foundation_Catalogue
             while (true)
             {
                 Console.Write("\n> ");
-                string yn = Console.ReadLine();
-                if (yn == "y" || yn == "Y")
+                string yn = Console.ReadLine()?.Trim().ToLower();
+                if (yn == "y")
                 {
                     containment = ReadFromFileOrConsole("What are the special containment procedures");
                     break;
                 }
-                else if (yn == "n" || yn == "N")
+                else if (yn == "n")
                     break;
                 else
                     Console.WriteLine("Invalid input.");
@@ -94,19 +94,21 @@ namespace SCP_Foundation_Catalogue
             while (true)
             {
                 Console.Write("\n> ");
-                string yn = Console.ReadLine();
-                if (yn == "y" || yn == "Y")
+                string yn = Console.ReadLine()?.Trim().ToLower();
+                if (yn == "y")
                 {
                     description = ReadFromFileOrConsole("What is the description");
                     break;
                 }
-                else if (yn == "n" || yn == "N")
+                else if (yn == "n")
                     break;
                 else
                     Console.WriteLine("Invalid input.");
             }
 
-            registry.Add(new SCP(id, name, objectClass, containment, description));
+            SCP newSCP = new SCP(id, name, objectClass, containment, description);
+            registry.Add(newSCP);
+            registry.Save(newSCP);
             Console.WriteLine($"{id} added successfully.");
         }
 
@@ -114,7 +116,7 @@ namespace SCP_Foundation_Catalogue
         {
             Console.WriteLine(prompt);
             Console.WriteLine("[1] Type/paste a single line");
-            Console.WriteLine("[2] Load from a .txt file");
+            Console.WriteLine("[2] Load from a .txt file\n");
             Console.Write("> ");
 
             string choice = Console.ReadLine()?.Trim();

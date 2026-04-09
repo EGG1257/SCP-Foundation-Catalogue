@@ -28,6 +28,7 @@ namespace SCP_Foundation_Catalogue
         static SCPRegistry registry = new SCPRegistry();
         private static void Main(string[] args)
         {
+            registry.LoadAll(); //Load previous entries
             string argument = "";//for pulling the id from the get command
             string userInput;//for storing the inputs by the user
             Console.WriteLine("For a list of available system commands, return 'help'.");
@@ -35,13 +36,13 @@ namespace SCP_Foundation_Catalogue
             while (true)
             {
                 argument = "";
-                Console.Write("> ");
+                Console.Write("H:\\> ");
                 userInput = Console.ReadLine();
 
                 int spaceIndex = userInput.IndexOf(' ');
                 string command = spaceIndex != -1 ? userInput.Substring(0, spaceIndex) : userInput;
                 if (spaceIndex != -1)
-                    argument = userInput.Substring(spaceIndex + 1);
+                    argument = userInput.Substring(spaceIndex + 1).ToUpper();
 
                 switch (command)
                 {
@@ -63,7 +64,12 @@ namespace SCP_Foundation_Catalogue
                     case "add":
                         AddSCP();
                         break;
-
+                    case "rm":
+                        if (argument == "")
+                            Console.WriteLine("ERROR: Missing argument. Usage: rm <id>");
+                        else
+                            DeleteSCP(argument);
+                        break;
                 }
 
             }
@@ -76,7 +82,8 @@ namespace SCP_Foundation_Catalogue
             Console.WriteLine("'clear' --------- Clear the console");
             Console.WriteLine("'list' ---------- List all stored folders");
             Console.WriteLine("'get <id>' ------ View the files of a specified entry");
-            Console.WriteLine("'add' ----------- Create a new entry\n");
+            Console.WriteLine("'add' ----------- Create a new entry");
+            Console.WriteLine("'rm <id>' ------- Delete an entry\n");
 
         }
     }
