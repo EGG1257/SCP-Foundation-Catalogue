@@ -8,7 +8,7 @@ namespace SCP_Foundation_Catalogue
 {
     internal partial class Program
     {
-        static void SearchSCP(string id)
+        static void SearchSCP(string id)//print the info of a specified scp
         {
             SCPEntry entry = registry.Get(id);
 
@@ -18,10 +18,10 @@ namespace SCP_Foundation_Catalogue
                 return;
             }
 
-            entry.PrintInfo(detailed: true);
+            entry.PrintInfo(detailed: true);//add the extra details
         }
 
-        static void ListAllSCPs()
+        static void ListAllSCPs()//list all the scp's
         {
             Console.WriteLine("\n=== All Registered SCPs ===");
 
@@ -30,7 +30,7 @@ namespace SCP_Foundation_Catalogue
 
         }
 
-        static void DeleteSCP(string id)
+        static void DeleteSCP(string id)//delete a selected scp
         {
             id = id.ToUpper().Trim();
             SCPEntry entry = registry.Get(id);
@@ -41,23 +41,23 @@ namespace SCP_Foundation_Catalogue
                 return;
             }
 
-            // Confirm before deleting
+            //Ask before deleting
             Console.Write($"Are you sure you want to delete {id}: {entry.Name}? This cannot be undone. (y/n)\n> ");
             string confirm = Console.ReadLine()?.Trim().ToLower();
 
-            if (confirm != "y")
+            if (confirm != "y")//cancel if y not input
             {
                 Console.WriteLine("Delete cancelled.");
                 return;
             }
 
-            // Remove from registry
+            //remove from the registry
             registry.Remove(id);
 
-            // Delete the folder and everything in it
+            //delete the folder and all it's innards
             string folderPath = Path.Combine("SCPDatabase", id);
             if (Directory.Exists(folderPath))
-                Directory.Delete(folderPath, recursive: true); // recursive deletes all files inside too
+                Directory.Delete(folderPath, recursive: true);
 
             Console.WriteLine($"SUCCESS: {id} has been deleted.");
         }

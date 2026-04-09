@@ -14,11 +14,11 @@ namespace SCP_Foundation_Catalogue
         public void Save(SCPEntry entry)
         {
             string folderPath = Path.Combine(dbPath, entry.Id);
-            Directory.CreateDirectory(folderPath); // creates the folder if it doesn't exist
+            Directory.CreateDirectory(folderPath); //creates the folder if it doesn't exist
 
             string filePath = Path.Combine(folderPath, $"{entry.Id}.json");
 
-            // manually build the json so you don't need any extra libraries
+            //build the json
             string json = $@"{{
             ""id"": ""{entry.Id}"",
             ""name"": ""{entry.Name}"",
@@ -42,7 +42,7 @@ namespace SCP_Foundation_Catalogue
 
                 string json = File.ReadAllText(filePath);
 
-                // parse each field out of the json manually
+                //parse each field out of the json
                 string entryId = ParseField(json, "id");
                 string name = ParseField(json, "name");
                 string objectClassStr = ParseField(json, "objectClass");
@@ -73,13 +73,13 @@ namespace SCP_Foundation_Catalogue
             if (start == -1) return "";
             start += search.Length;
 
-            // walk forward until we find an unescaped closing quote
+            //walk forward until we find an unescaped closing quote
             int end = start;
             while (end < json.Length)
             {
                 if (json[end] == '\\')
                 {
-                    end += 2; // skip escaped character e.g. \" or \n
+                    end += 2; //skip escaped character e.g. \" or \n
                     continue;
                 }
                 if (json[end] == '"')
@@ -89,7 +89,7 @@ namespace SCP_Foundation_Catalogue
 
             string value = json.Substring(start, end - start);
 
-            // convert escape sequences back to real characters
+            //convert escape sequences back to real characters
             value = value.Replace("\\n", "\n")
                          .Replace("\\\"", "\"")
                          .Replace("\\\\", "\\");

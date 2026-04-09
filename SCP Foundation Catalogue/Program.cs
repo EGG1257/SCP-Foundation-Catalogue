@@ -6,7 +6,7 @@ using System.Xml.Linq;
 
 namespace SCP_Foundation_Catalogue
 {
-    public enum ObjectClass
+    public enum ObjectClass//the different object classes an scp can have
     {
         Safe = 1,
         Euclid = 2,
@@ -28,7 +28,11 @@ namespace SCP_Foundation_Catalogue
         static SCPRegistry registry = new SCPRegistry();
         private static void Main(string[] args)
         {
+            
+
             registry.LoadAll(); //Load previous entries
+            BootSequence();//play the boot sequence in BootStuff.cs
+            PrintStartup();//print the startup info
             string argument = "";//for pulling the id from the get command
             string userInput;//for storing the inputs by the user
             Console.WriteLine("For a list of available system commands, return 'help'.");
@@ -39,43 +43,49 @@ namespace SCP_Foundation_Catalogue
                 Console.Write("H:\\> ");
                 userInput = Console.ReadLine();
 
+                //Cut the code in half to seperate the command and argument
                 int spaceIndex = userInput.IndexOf(' ');
                 string command = spaceIndex != -1 ? userInput.Substring(0, spaceIndex) : userInput;
                 if (spaceIndex != -1)
                     argument = userInput.Substring(spaceIndex + 1).ToUpper();
 
-                switch (command)
+                switch (command)//All available commands will do what they are programmed to do when input
                 {
                     case "help":
-                        Help();
+                        Help();//show help menu
                         break;
                     case "clear":
-                        Console.Clear();
+                        Console.Clear();//clear the console
                         break;
                     case "list":
-                        ListAllSCPs(); 
+                        ListAllSCPs(); //list all the scp's
                         break;
                     case "get":
-                        if (argument == "")
+                        if (argument == "")//if an argument is not provided return an error
                             Console.WriteLine("ERROR: Missing argument. Usage: get <id>");
                         else
-                            SearchSCP(argument);
+                            SearchSCP(argument);//show the details of the selected scp
                         break;
                     case "add":
-                        AddSCP();
+                        AddSCP();//run the program for adding a new scp
                         break;
                     case "rm":
-                        if (argument == "")
+                        if (argument == "")//if an argument is not provided return an error
                             Console.WriteLine("ERROR: Missing argument. Usage: rm <id>");
                         else
                             DeleteSCP(argument);
+                        break;
+                    default:
+                        if (userInput == "")
+                            break;
+                        Console.WriteLine($"{userInput}: command not found");
                         break;
                 }
 
             }
         }
 
-        static void Help()
+        static void Help()//list of available commands
         {
             Console.WriteLine("List of available commands:\n");
             Console.WriteLine("'help' ---------- Show information on available commands");
@@ -86,5 +96,17 @@ namespace SCP_Foundation_Catalogue
             Console.WriteLine("'rm <id>' ------- Delete an entry\n");
 
         }
+
+
+        static void PrintStartup()//startup info that displays when the program starts
+        {
+            Console.WriteLine($"System information as of {DateTime.Now:ddd MMM dd HH:mm:ss} UTC {DateTime.Now.Year}\n");
+            Console.WriteLine($"{"Load:",-20} {"4.49",-20} {"Processes:",-25} 117");
+            Console.WriteLine($"{"Usage of H:/:",-20} {"2% of 39.48GB",-20} {"Users logged in:",-25} 1");
+            Console.WriteLine($"{"Memory usage:",-20} {"40%",-20} {"Site:",-25} Site-19");
+            Console.WriteLine($"{"Status:",-20} {"SECURE",-20} {"Clearance:",-25} Level 3");
+            Console.WriteLine();
+        }
+
     }
 }

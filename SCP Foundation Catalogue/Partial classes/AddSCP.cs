@@ -14,7 +14,7 @@ namespace SCP_Foundation_Catalogue
             int intInput = 0;
             bool selected = true;
             //Ask for SCP ID
-            Console.Write("What is the id of the SCP (e.g. SCP-1234)\n> ");
+            Console.Write("What is the id of the SCP (e.g. SCP-123)\n> ");
             string id = Console.ReadLine().ToUpper();
             if (registry.Get(id) != null) { Console.WriteLine($"{id} already exists."); return; }
             //Ask for SCP Name
@@ -71,8 +71,10 @@ namespace SCP_Foundation_Catalogue
             }
             objectClass = (ObjectClass)intInput;
 
+            //strings for storing confainment details and description
             string containment = "";
             string description = "";
+            //give the option to add a containment procedure
             Console.Write("Would you like to add a special containment procedure (y/n)");
             while (true)
             {
@@ -90,6 +92,7 @@ namespace SCP_Foundation_Catalogue
 
             }
             
+            //give the option to add a description
             Console.Write("Would you like to add a description (y/n)");
             while (true)
             {
@@ -106,17 +109,17 @@ namespace SCP_Foundation_Catalogue
                     Console.WriteLine("Invalid input.");
             }
 
-            SCP newSCP = new SCP(id, name, objectClass, containment, description);
-            registry.Add(newSCP);
-            registry.Save(newSCP);
+            SCP newSCP = new SCP(id, name, objectClass, containment, description);//create the new SCP
+            registry.Add(newSCP);//add it to the registry
+            registry.Save(newSCP);//save it to the json file
             Console.WriteLine($"{id} added successfully.");
         }
 
-        static string ReadFromFileOrConsole(string prompt)
+        static string ReadFromFileOrConsole(string prompt)//for reading a file to allow for bigger and more complex text to be added
         {
             Console.WriteLine(prompt);
-            Console.WriteLine("[1] Type/paste a single line");
-            Console.WriteLine("[2] Load from a .txt file\n");
+            Console.WriteLine("[1] Type a single line");
+            Console.WriteLine("[2] Load from a .txt file (for large block of text)\n");
             Console.Write("> ");
 
             string choice = Console.ReadLine()?.Trim();
@@ -130,6 +133,7 @@ namespace SCP_Foundation_Catalogue
                     return File.ReadAllText(path);
                 else
                 {
+                    //return to manual input if file not found
                     Console.WriteLine("File not found, falling back to manual input.");
                 }
             }

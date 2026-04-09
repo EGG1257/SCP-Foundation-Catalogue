@@ -18,12 +18,12 @@ namespace SCP_Foundation_Catalogue
             
         }
 
-        public override void PrintInfo(bool detailed = false)
+        public override void PrintInfo(bool detailed = false)//print the info of an scp
         {
             Console.WriteLine($"\n  ┌─ {id}: {name}");
             Console.WriteLine($"  │  Object Class: {objectClass}");
 
-            if (detailed)
+            if (detailed)//print the rest of the info if detailed is true
             {
                 Console.WriteLine($"  │");
                 if (ContainmentProcedures != "")
