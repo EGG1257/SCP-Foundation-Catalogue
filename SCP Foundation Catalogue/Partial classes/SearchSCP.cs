@@ -23,7 +23,7 @@ namespace SCP_Foundation_Catalogue
 
         static void ListAllSCPs()//list all the scp's
         {
-            Console.WriteLine("\n=== All Registered SCPs ===");
+            Console.WriteLine("\n=== All Registered SCPs ===");//fix styling
 
             foreach (SCPEntry entry in registry.All)
                 entry.PrintInfo(detailed: false);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,6 +21,8 @@ namespace SCP_Foundation_Catalogue
 
         public override void PrintInfo(bool detailed = false)//print the info of an scp
         {
+            if (detailed)
+                ClearConsole();
             Console.WriteLine($"\n  ┌─ {id}: {name}");
             Console.WriteLine($"  │  Object Class: {objectClass}");
 
@@ -65,10 +68,13 @@ namespace SCP_Foundation_Catalogue
 
                 string indent = "";
                 int colonIndex = line.IndexOf(':');
-
                 if (colonIndex > 0 && int.TryParse(line.Substring(0, colonIndex), out _))
                 {
                     indent = new string(' ', colonIndex + 2);
+                }
+                else if (line.StartsWith("•"))
+                {
+                    indent = new string(' ', 2); // indent wrapped lines to align with text after the bullet
                 }
 
                 var words = line.Split(' ');
@@ -96,6 +102,12 @@ namespace SCP_Foundation_Catalogue
                     Console.WriteLine(prefix + currentLine.TrimEnd());
                 }
             }
+        }
+
+        static void ClearConsole()//clears the console and the scrollback history so that it fully clears the console and not just the visible stuff.
+        {
+            Console.Clear();
+            Console.Write("\x1b[3J"); // ANSI escape code to clear the scrollback buffer
         }
     }
 }

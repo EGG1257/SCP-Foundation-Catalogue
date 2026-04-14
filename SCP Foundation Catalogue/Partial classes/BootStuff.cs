@@ -59,7 +59,7 @@ namespace SCP_Foundation_Catalogue
 
             //wait a bit for a realistic feeling boot
             Thread.Sleep(800);
-            Console.Clear();
+            ClearConsole();
         }
     }
 }

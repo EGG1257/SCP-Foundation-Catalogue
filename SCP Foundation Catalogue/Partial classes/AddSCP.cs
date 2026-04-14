@@ -74,18 +74,19 @@ namespace SCP_Foundation_Catalogue
             //strings for storing confainment details and description
             string containment = "";
             string description = "";
+            List<string> additionalFiles = new List<string>();
             //give the option to add a containment procedure
             Console.Write("Would you like to add a special containment procedure (y/n)");
             while (true)
             {
                 Console.Write("\n> ");
-                string yn = Console.ReadLine()?.Trim().ToLower();
-                if (yn == "y")
+                string conYn = Console.ReadLine()?.Trim().ToLower();
+                if (conYn == "y")
                 {
-                    containment = ReadFromFileOrConsole("What are the special containment procedures");
+                    containment = ReadLocation("What are the special containment procedures");
                     break;
                 }
-                else if (yn == "n")
+                else if (conYn == "n")
                     break;
                 else
                     Console.WriteLine("Invalid input.");
@@ -97,25 +98,58 @@ namespace SCP_Foundation_Catalogue
             while (true)
             {
                 Console.Write("\n> ");
-                string yn = Console.ReadLine()?.Trim().ToLower();
-                if (yn == "y")
+                string descYn = Console.ReadLine()?.Trim().ToLower();
+                if (descYn == "y")
                 {
-                    description = ReadFromFileOrConsole("What is the description");
+                    description = ReadLocation("What is the description");
                     break;
                 }
-                else if (yn == "n")
+                else if (descYn == "n")
                     break;
                 else
                     Console.WriteLine("Invalid input.");
             }
 
+
+            Console.Write("Would you like to add any additional files (y/n)\n> ");
+            string addYn = Console.ReadLine()?.Trim().ToLower();
+
+            if (addYn == "y")
+            {
+                string scpFolder = Path.Combine("SCPDatabase", id);
+                Directory.CreateDirectory(scpFolder);
+
+                while (true)
+                {
+                    Console.Write("Enter file path to attach (or 'done' to finish)\n> ");
+                    string filePath = Console.ReadLine()?.Trim().Trim('"');
+
+                    if (filePath.ToLower() == "done") 
+                        break;
+
+                    if (!File.Exists(filePath))
+                    {
+                        Console.WriteLine($"ERROR: No file found at '{filePath}'");
+                        continue;
+                    }
+
+                    string fileName = Path.GetFileName(filePath);
+                    string destination = Path.Combine(scpFolder, fileName);
+
+                    File.Copy(filePath, destination, overwrite: true);
+                    additionalFiles.Add(destination);
+                    Console.WriteLine($"SUCCESS: {fileName} attached.");
+                }
+            }
+
             SCP newSCP = new SCP(id, name, objectClass, containment, description);//create the new SCP
+            newSCP.AdditionalFiles = additionalFiles;
             registry.Add(newSCP);//add it to the registry
             registry.Save(newSCP);//save it to the json file
             Console.WriteLine($"{id} added successfully.");
         }
 
-        static string ReadFromFileOrConsole(string prompt)//for reading a file to allow for bigger and more complex text to be added
+        static string ReadLocation(string prompt)//for reading a file to allow for bigger and more complex text to be added
         {
             Console.WriteLine(prompt);
             Console.WriteLine("[1] Type a single line");
@@ -126,7 +160,7 @@ namespace SCP_Foundation_Catalogue
 
             if (choice == "2")
             {
-                Console.Write("Enter the full file path (e.g. C:\\Users\\You\\containment.txt): ");
+                Console.Write("Enter the full file path (e.g. C:\\Users\\person\\containment.txt): ");
                 string path = Console.ReadLine()?.Trim().Trim('"'); // strip quotes if dragged in
 
                 if (File.Exists(path))

@@ -28,8 +28,7 @@ namespace SCP_Foundation_Catalogue
         static SCPRegistry registry = new SCPRegistry();
         private static void Main(string[] args)
         {
-            
-
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
             registry.LoadAll(); //Load previous entries
             BootSequence();//play the boot sequence in BootStuff.cs
             PrintStartup();//print the startup info
@@ -55,7 +54,7 @@ namespace SCP_Foundation_Catalogue
                         Help();//show help menu
                         break;
                     case "clear":
-                        Console.Clear();//clear the console
+                        ClearConsole();//clear the console
                         break;
                     case "list":
                         ListAllSCPs(); //list all the scp's
@@ -75,6 +74,10 @@ namespace SCP_Foundation_Catalogue
                         else
                             DeleteSCP(argument);
                         break;
+                    case "info":
+                        Info info = new Info();
+                        info.Start();//launch the info terminal
+                        break;
                     default:
                         if (userInput == "")
                             break;
@@ -88,12 +91,13 @@ namespace SCP_Foundation_Catalogue
         static void Help()//list of available commands
         {
             Console.WriteLine("List of available commands:\n");
-            Console.WriteLine("'help' ---------- Show information on available commands");
-            Console.WriteLine("'clear' --------- Clear the console");
-            Console.WriteLine("'list' ---------- List all stored folders");
-            Console.WriteLine("'get <id>' ------ View the files of a specified entry");
-            Console.WriteLine("'add' ----------- Create a new entry");
-            Console.WriteLine("'rm <id>' ------- Delete an entry\n");
+            Console.WriteLine("'help' ----------- Show information on available commands");
+            Console.WriteLine("'clear' ---------- Clear the console");
+            Console.WriteLine("'list' ----------- List all stored folders");
+            Console.WriteLine("'get <id>' ------- View the files of a specified entry");
+            Console.WriteLine("'add' ------------ Create a new entry");
+            Console.WriteLine("'info' ----------- Access the information terminal");
+            Console.WriteLine("'rm <id>' -------- Delete an entry\n");
 
         }
 
@@ -106,6 +110,12 @@ namespace SCP_Foundation_Catalogue
             Console.WriteLine($"{"Memory usage:",-20} {"40%",-20} {"Site:",-25} Site-19");
             Console.WriteLine($"{"Status:",-20} {"SECURE",-20} {"Clearance:",-25} Level 3");
             Console.WriteLine();
+        }
+
+        public static void ClearConsole()
+        {
+            Console.Clear();
+            Console.Write("\x1b[3J"); // ANSI escape code to clear the scrollback buffer
         }
 
     }
