@@ -8,7 +8,8 @@ namespace SCP_Foundation_Catalogue
 {
     class SCPRegistry
     {
-        static string dbPath = "SCPDatabase";
+        static string basePath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"..\..\..\"));
+        static string dbPath = Path.Combine(basePath, "SCPDatabase");
         private readonly Dictionary<string, SCPEntry> _entries = new();
 
         public void Save(SCPEntry entry)//Save the SCPs to their own json file
