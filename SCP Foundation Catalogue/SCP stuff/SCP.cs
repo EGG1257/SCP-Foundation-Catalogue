@@ -12,6 +12,8 @@ namespace SCP_Foundation_Catalogue
         public string Description { get; set; }
         public string ContainmentProcedures { get; set; }
 
+        public List<string> AdditionalFiles { get; set; } = new List<string>();
+
         public SCP(string id, string name, ObjectClass objectClass, string containmentProcedures, string description) : base(id, name, objectClass)
         {
             ContainmentProcedures = containmentProcedures;
@@ -42,6 +44,15 @@ namespace SCP_Foundation_Catalogue
                     Console.WriteLine($"  │  ┌─Description:");
                     PrintBlock(Description);
                     Console.WriteLine("  │  └─");
+                }
+
+                if (AdditionalFiles.Count > 0)
+                {
+                    Console.WriteLine($"  │");
+                    Console.WriteLine($"  │  ┌─ Additional Files:");
+                    foreach (string file in AdditionalFiles)
+                        Console.WriteLine($"  │  │  {Path.GetFileName(file)}   →   {file}");
+                    Console.WriteLine($"  │  └─");
                 }
             }
 

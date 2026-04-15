@@ -11,26 +11,29 @@ namespace SCP_Foundation_Catalogue
         static string dbPath = "SCPDatabase";
         private readonly Dictionary<string, SCPEntry> _entries = new();
 
-        public void Save(SCPEntry entry)
+        public void Save(SCPEntry entry)//Save the SCPs to their own json file
         {
             string folderPath = Path.Combine(dbPath, entry.Id);
-            Directory.CreateDirectory(folderPath); //creates the folder if it doesn't exist
-
+            Directory.CreateDirectory(folderPath);
             string filePath = Path.Combine(folderPath, $"{entry.Id}.json");
 
-            //build the json
+            SCP scp = (SCP)entry;
+
+            string filesJson = string.Join(", ", scp.AdditionalFiles.Select(f => $"\"{f.Replace("\\", "\\\\")}\""));
+
             string json = $@"{{
-            ""id"": ""{entry.Id}"",
-            ""name"": ""{entry.Name}"",
-            ""objectClass"": ""{entry.ObjectClass}"",
-            ""containmentProcedures"": {JsonEscape(((SCP)entry).ContainmentProcedures)},
-            ""description"": {JsonEscape(((SCP)entry).Description)}
-        }}";
+            ""id"": ""{scp.Id}"",
+            ""name"": ""{scp.Name}"",
+            ""objectClass"": ""{scp.ObjectClass}"",
+            ""containmentProcedures"": {JsonEscape(scp.ContainmentProcedures)},
+            ""description"": {JsonEscape(scp.Description)},
+            ""additionalFiles"": [{filesJson}]
+            }}";
 
             File.WriteAllText(filePath, json);
         }
 
-        public void LoadAll()
+        public void LoadAll()//used for loading the SCPs to the registry when the program starts
         {
             if (!Directory.Exists(dbPath)) return;
 
@@ -42,15 +45,19 @@ namespace SCP_Foundation_Catalogue
 
                 string json = File.ReadAllText(filePath);
 
-                //parse each field out of the json
                 string entryId = ParseField(json, "id");
                 string name = ParseField(json, "name");
                 string objectClassStr = ParseField(json, "objectClass");
                 string containment = ParseField(json, "containmentProcedures");
                 string description = ParseField(json, "description");
+                List<string> files = ParseArray(json, "additionalFiles");
 
                 if (Enum.TryParse(objectClassStr, out ObjectClass objectClass))
-                    Add(new SCP(entryId, name, objectClass, containment, description));
+                {
+                    SCP scp = new SCP(entryId, name, objectClass, containment, description);
+                    scp.AdditionalFiles = files;
+                    Add(scp);
+                }
             }
         }
 
@@ -104,6 +111,27 @@ namespace SCP_Foundation_Catalogue
                          .Replace("\r\n", "\\n")
                          .Replace("\n", "\\n");
             return $"\"{value}\"";
+        }
+
+        private List<string> ParseArray(string json, string key)
+        {
+            List<string> results = new List<string>();
+            string search = $"\"{key}\": [";
+            int start = json.IndexOf(search);
+            if (start == -1) return results;
+
+            start += search.Length;
+            int end = json.IndexOf("]", start);
+            string array = json.Substring(start, end - start);
+
+            foreach (string part in array.Split(','))
+            {
+                string value = part.Trim().Trim('"').Replace("\\\\", "\\");
+                if (!string.IsNullOrEmpty(value))
+                    results.Add(value);
+            }
+
+            return results;
         }
 
         public SCPEntry Get(string id) => _entries.TryGetValue(id.ToUpper(), out var entry) ? entry : null;

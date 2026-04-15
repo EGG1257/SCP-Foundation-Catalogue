@@ -12,10 +12,12 @@ namespace SCP_Foundation_Catalogue
 
         public void Start()
         {
+            bool invalidInput = false;
             int intInput;
             while (menu)
             {
                 Console.Clear();
+                if (invalidInput) { Console.WriteLine("Invalid input"); invalidInput = false;}
                 Console.WriteLine("Information terminal:");
                 Console.WriteLine("[1] The SCP foundation");
                 Console.WriteLine("[2] Object classes");
@@ -25,7 +27,7 @@ namespace SCP_Foundation_Catalogue
                 if (int.TryParse(input, out intInput))
                     Selection(intInput);
                 else
-                    Console.WriteLine("Invalid input.");
+                    invalidInput = true;
                 
             }
         }

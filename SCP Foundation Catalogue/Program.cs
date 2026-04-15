@@ -3,6 +3,7 @@ using System;
 using System.ComponentModel;
 using System.Reflection.Emit;
 using System.Xml.Linq;
+using System.Diagnostics;
 
 namespace SCP_Foundation_Catalogue
 {
@@ -28,6 +29,7 @@ namespace SCP_Foundation_Catalogue
         static SCPRegistry registry = new SCPRegistry();
         private static void Main(string[] args)
         {
+            Console.Write("\x1b[38;2;250;209;153m");
             Console.OutputEncoding = System.Text.Encoding.UTF8;
             registry.LoadAll(); //Load previous entries
             BootSequence();//play the boot sequence in BootStuff.cs
@@ -53,10 +55,10 @@ namespace SCP_Foundation_Catalogue
                     case "help":
                         Help();//show help menu
                         break;
-                    case "clear":
+                    case "cls":
                         ClearConsole();//clear the console
                         break;
-                    case "list":
+                    case "ls":
                         ListAllSCPs(); //list all the scp's
                         break;
                     case "get":
@@ -64,6 +66,12 @@ namespace SCP_Foundation_Catalogue
                             Console.WriteLine("ERROR: Missing argument. Usage: get <id>");
                         else
                             SearchSCP(argument);//show the details of the selected scp
+                        break;
+                    case "open":
+                        if (argument == "")//if an argument is not provided return an error
+                            Console.WriteLine("ERROR: Missing argument. Usage: open <file path>");
+                        else
+                            OpenFile(argument);
                         break;
                     case "add":
                         AddSCP();//run the program for adding a new scp
@@ -91,13 +99,14 @@ namespace SCP_Foundation_Catalogue
         static void Help()//list of available commands
         {
             Console.WriteLine("List of available commands:\n");
-            Console.WriteLine("'help' ----------- Show information on available commands");
-            Console.WriteLine("'clear' ---------- Clear the console");
-            Console.WriteLine("'list' ----------- List all stored folders");
-            Console.WriteLine("'get <id>' ------- View the files of a specified entry");
-            Console.WriteLine("'add' ------------ Create a new entry");
-            Console.WriteLine("'info' ----------- Access the information terminal");
-            Console.WriteLine("'rm <id>' -------- Delete an entry\n");
+            Console.WriteLine("'help' --------------- Show information on available commands");
+            Console.WriteLine("'cls' ---------------- Clear the console");
+            Console.WriteLine("'ls' ----------------- List all stored entries");
+            Console.WriteLine("'get <id>' ----------- View the files of a specified entry");
+            Console.WriteLine("'add' ---------------- Create a new entry");
+            Console.WriteLine("'open <file>' -------- Open a file");
+            Console.WriteLine("'info' --------------- Access the information terminal");
+            Console.WriteLine("'rm <id>' ------------ Delete an entry\n");
 
         }
 
@@ -110,6 +119,15 @@ namespace SCP_Foundation_Catalogue
             Console.WriteLine($"{"Memory usage:",-20} {"40%",-20} {"Site:",-25} Site-19");
             Console.WriteLine($"{"Status:",-20} {"SECURE",-20} {"Clearance:",-25} Level 3");
             Console.WriteLine();
+        }
+
+        static void OpenFile(string filePath)//Used for opening file using that file types default viewer
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = filePath,
+                UseShellExecute = true
+            });
         }
 
         public static void ClearConsole()

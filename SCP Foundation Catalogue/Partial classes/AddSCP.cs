@@ -21,7 +21,8 @@ namespace SCP_Foundation_Catalogue
             Console.Write("What is the name of the SCP\n> ");
             string name = Console.ReadLine();
             //Ask for SCP Object class
-            Console.WriteLine("What is the object class of the SCP:\n[1] Safe\n[2] Euclid\n[3] Keter\n[4] Thaumiel\n[5] Show secondary classes\n[6] Show non-standard object classes");
+            Console.WriteLine("What is the object class of the SCP:");
+            Console.WriteLine("[1] Safe           [5] Apollyon       [9]  Explained       [13] Uncontained\n[2] Euclid         [6] Archon         [10] Neutralized\n[3] Keter          [7] Cernunnos      [11] Decommissioned\n[4] Thaumiel       [8] Ticonderoga    [12] Pending");
             ObjectClass objectClass;
             while (selected)//Input and validate the selection
             {
@@ -34,41 +35,6 @@ namespace SCP_Foundation_Catalogue
                     Console.WriteLine("Invalid input.");
             }
             selected = true;
-
-            if (intInput == 5)//Output the secondary classes and ask for input again
-            {
-                Console.WriteLine("[1] Apollyon\n[2] Archon\n[3] Cernunnos\n[4] Ticonderoga");
-
-                while (selected)
-                {
-                    Console.Write("> ");
-                    string input = Console.ReadLine();
-
-                    if (int.TryParse(input, out intInput))
-                        selected = false;
-                    else
-                        Console.WriteLine("Invalid input.");
-
-                    intInput += 4;//add 4 to align with the object class enum
-                }
-            }
-            else if (intInput == 6)//Output the non-standard classes and ask for input again
-            {
-                Console.WriteLine("[1] Explained\n[2] Neutralized\n[3] Decommissioned\n[4] Pending\n[5] Uncontained");
-
-                while (selected)
-                {
-                    Console.Write("> ");
-                    string input = Console.ReadLine();
-
-                    if (int.TryParse(input, out intInput))
-                        selected = false;
-                    else
-                        Console.WriteLine("Invalid input.");
-
-                    intInput += 8;//add 8 to align with the object class enum
-                }
-            }
             objectClass = (ObjectClass)intInput;
 
             //strings for storing confainment details and description
