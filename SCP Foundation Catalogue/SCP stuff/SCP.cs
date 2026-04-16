@@ -11,7 +11,7 @@ namespace SCP_Foundation_Catalogue
     {
         public string Description { get; set; }
         public string ContainmentProcedures { get; set; }
-
+        public Dictionary<string, string> Addendums { get; set; } = new Dictionary<string, string>();
         public List<string> AdditionalFiles { get; set; } = new List<string>();
 
         public SCP(string id, string name, ObjectClass objectClass, string containmentProcedures, string description) : base(id, name, objectClass)
@@ -30,29 +30,40 @@ namespace SCP_Foundation_Catalogue
 
             if (detailed)//print the rest of the info if detailed is true
             {
-                Console.WriteLine($"  │");
+                Console.WriteLine("  │");
                 if (ContainmentProcedures != "")
                 {
-                    Console.WriteLine($"  │  ┌─Special Containment Procedures:");
+                    Console.WriteLine("  │  ┌─Special Containment Procedures:");
                     PrintBlock(ContainmentProcedures);
                     Console.WriteLine("  │  └─");
                 }
 
                 if (Description != "")
                 {
-                    Console.WriteLine($"  │");
-                    Console.WriteLine($"  │  ┌─Description:");
+                    Console.WriteLine("  │");
+                    Console.WriteLine("  │  ┌─Description:");
                     PrintBlock(Description);
                     Console.WriteLine("  │  └─");
                 }
 
+                if (Addendums.Count > 0)
+                {
+                    foreach (KeyValuePair<string, string> entry in Addendums)
+                    {
+                        Console.WriteLine("  │");
+                        Console.WriteLine($"  │  ┌─ Addendum: {entry.Key}");
+                        PrintBlock(entry.Value);
+                        Console.WriteLine("  │  └─");
+                    }
+                }
+
                 if (AdditionalFiles.Count > 0)
                 {
-                    Console.WriteLine($"  │");
-                    Console.WriteLine($"  │  ┌─ Additional Files:");
+                    Console.WriteLine("  │");
+                    Console.WriteLine("  │  ┌─ Additional Files:");
                     foreach (string file in AdditionalFiles)
                         Console.WriteLine($"  │  │  {Path.GetFileName(file)}   →   {file}");
-                    Console.WriteLine($"  │  └─");
+                    Console.WriteLine("  │  └─");
                 }
             }
 

@@ -21,13 +21,60 @@ namespace SCP_Foundation_Catalogue
             entry.PrintInfo(detailed: true);//add the extra details
         }
 
-        static void ListAllSCPs()//list all the scp's
+        static void ListAllSCPs(string argument)//list all the scp's
         {
-            Console.WriteLine("\n=== All Registered SCPs ===");//fix styling
+            if (string.IsNullOrEmpty(argument))
+            {
+                Console.WriteLine("\n=== All Registered SCPs ===");//fix styling
 
+                foreach (SCPEntry entry in registry.All)
+                    entry.PrintInfo(detailed: false);
+            }
+            else
+            {
+                int min = 0;
+                int max = 0;
+                string[] parts = argument.Split(' ');
+                if (parts.Length == 1)
+                {
+                    max = 10000;
+                    if (!int.TryParse(parts[0], out min))
+                        Console.WriteLine($"ERROR: Invalid argument. Usage: ls [minimum value] [maximum value]");
+                    else
+                        Range(min, max);
+                }
+                else
+                {
+                    if (!int.TryParse(parts[0], out min))
+                        Console.WriteLine($"ERROR: Invalid argument. Usage: ls [minimum value] [maximum value]");
+                    else if (!int.TryParse(parts[1], out max))
+                        Console.WriteLine($"ERROR: Invalid argument. Usage: ls [minimum value] [maximum value]");
+                    else
+                        Range(min, max);
+                }
+
+
+            }
+            
+
+        }
+
+        static void Range(int min, int max)
+        {
+            int count = 0;
             foreach (SCPEntry entry in registry.All)
-                entry.PrintInfo(detailed: false);
+            {
+                // pull the number out of the ID e.g. "SCP-006" -> 6
+                string numPart = entry.Id.Replace("SCP-", "").Split('-')[0]; // handles SCP-096-A too
+                if (int.TryParse(numPart, out int scpNumber) && scpNumber >= min && scpNumber <= max)
+                {
+                    entry.PrintInfo(detailed: false);
+                    count++;
+                }
+            }
 
+            if (count == 0)
+                Console.WriteLine($"  No entries found in range {min}-{max}.");
         }
 
         static void DeleteSCP(string id)//delete a selected scp

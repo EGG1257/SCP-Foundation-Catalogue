@@ -41,6 +41,8 @@ namespace SCP_Foundation_Catalogue
             string containment = "";
             string description = "";
             List<string> additionalFiles = new List<string>();
+            Dictionary<string, string> addendums = new Dictionary<string, string>(); //dictionary because there can be multiple addendums with names
+
             //give the option to add a containment procedure
             Console.Write("Would you like to add a special containment procedure (y/n)");
             while (true)
@@ -76,7 +78,27 @@ namespace SCP_Foundation_Catalogue
                     Console.WriteLine("Invalid input.");
             }
 
+            //for adding any number of addendums
+            bool addeBool = true;
+            while (addeBool)
+            {
+                string addeName;
+                string addeText;
+                Console.Write("Would you like to add an addendum (y/n)\n> ");//ask if user wants to add addendum
+                string adenYn = Console.ReadLine()?.Trim().ToLower();
 
+                if (adenYn == "y")//if yes ask for name and inards and then write those to the addendum dictionary
+                {
+                    Console.Write("What is the name of the addendum\n> ");
+                    addeName = Console.ReadLine();
+                    addeText = ReadLocation("What is the addendum");
+                    addendums.Add(addeName, addeText);//add to dictioanry
+                }
+                else if (adenYn == "n") addeBool = false;//if no break addendum loop
+                else Console.WriteLine("Invalid input.");
+            }
+
+            //for adding aditional files
             Console.Write("Would you like to add any additional files (y/n)\n> ");
             string addYn = Console.ReadLine()?.Trim().ToLower();
 
@@ -110,6 +132,7 @@ namespace SCP_Foundation_Catalogue
 
             SCP newSCP = new SCP(id, name, objectClass, containment, description);//create the new SCP
             newSCP.AdditionalFiles = additionalFiles;
+            newSCP.Addendums = addendums;
             registry.Add(newSCP);//add it to the registry
             registry.Save(newSCP);//save it to the json file
             Console.WriteLine($"{id} added successfully.");

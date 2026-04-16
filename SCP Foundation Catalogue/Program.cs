@@ -59,7 +59,7 @@ namespace SCP_Foundation_Catalogue
                         ClearConsole();//clear the console
                         break;
                     case "ls":
-                        ListAllSCPs(); //list all the scp's
+                        ListAllSCPs(argument);
                         break;
                     case "get":
                         if (argument == "")//if an argument is not provided return an error
@@ -101,12 +101,13 @@ namespace SCP_Foundation_Catalogue
             Console.WriteLine("List of available commands:\n");
             Console.WriteLine("'help' --------------- Show information on available commands");
             Console.WriteLine("'cls' ---------------- Clear the console");
-            Console.WriteLine("'ls' ----------------- List all stored entries");
+            Console.WriteLine("'ls [min] [max]' ----- List stored entries");
             Console.WriteLine("'get <id>' ----------- View the files of a specified entry");
             Console.WriteLine("'add' ---------------- Create a new entry");
             Console.WriteLine("'open <file>' -------- Open a file");
             Console.WriteLine("'info' --------------- Access the information terminal");
             Console.WriteLine("'rm <id>' ------------ Delete an entry\n");
+            Console.WriteLine("* <> is a required argument. [] is an optional argument\n");
 
         }
 
