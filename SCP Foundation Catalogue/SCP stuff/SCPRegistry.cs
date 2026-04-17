@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Text.Json;
 
 namespace SCP_Foundation_Catalogue
 {
     class SCPRegistry
     {
-        static string basePath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"..\..\..\"));
-        static string dbPath = Path.Combine(basePath, "SCPDatabase");
+        static string dbPath = "SCPDatabase";
         private readonly Dictionary<string, SCPEntry> _entries = new();
 
         public void Save(SCPEntry entry)//Save the SCPs to their own json file
@@ -21,7 +19,10 @@ namespace SCP_Foundation_Catalogue
 
             SCP scp = (SCP)entry;
 
-            string filesJson = string.Join(", ", scp.AdditionalFiles.Select(f => $"\"{f.Replace("\\", "\\\\")}\""));
+            string filesJson = string.Join(", ", scp.AdditionalFiles.Select(f => $"\"{Path.GetRelativePath(dbPath, f).Replace("\\", "\\\\")}\""));
+
+            string addendumsJson = string.Join(", ", scp.Addendums.Select(kvp => $"{{ \"key\": {JsonEscape(kvp.Key)}, \"value\": {JsonEscape(kvp.Value)} }}"));
+
 
             string json = $@"{{
             ""id"": ""{scp.Id}"",
@@ -29,7 +30,8 @@ namespace SCP_Foundation_Catalogue
             ""objectClass"": ""{scp.ObjectClass}"",
             ""containmentProcedures"": {JsonEscape(scp.ContainmentProcedures)},
             ""description"": {JsonEscape(scp.Description)},
-            ""additionalFiles"": [{filesJson}]
+            ""additionalFiles"": [{filesJson}],
+            ""addendums"": [{addendumsJson}]
             }}";
 
             File.WriteAllText(filePath, json);
@@ -52,12 +54,14 @@ namespace SCP_Foundation_Catalogue
                 string objectClassStr = ParseField(json, "objectClass");
                 string containment = ParseField(json, "containmentProcedures");
                 string description = ParseField(json, "description");
-                List<string> files = ParseArray(json, "additionalFiles");
+                List<string> relativeFiles = ParseArray(json, "additionalFiles");
+                List<string> files = relativeFiles.Select(f => Path.Combine(dbPath, f)).ToList();
 
                 if (Enum.TryParse(objectClassStr, out ObjectClass objectClass))
                 {
                     SCP scp = new SCP(entryId, name, objectClass, containment, description);
                     scp.AdditionalFiles = files;
+                    scp.Addendums = ParseAddendums(json);
                     Add(scp);
                 }
             }
@@ -134,6 +138,43 @@ namespace SCP_Foundation_Catalogue
             }
 
             return results;
+        }
+
+        private Dictionary<string, string> ParseAddendums(string json)
+        {
+            var result = new Dictionary<string, string>();
+            string search = "\"addendums\": [";
+            int arrayStart = json.IndexOf(search);
+            if (arrayStart == -1) return result;
+
+            // Find the closing ] of the addendums array
+            int arrayContentStart = arrayStart + search.Length;
+            int arrayEnd = json.IndexOf(']', arrayContentStart);
+            if (arrayEnd == -1) return result;
+
+            // Work only within the array's content so we don't wander into the outer object
+            string arrayContent = json.Substring(arrayContentStart, arrayEnd - arrayContentStart);
+
+            int pos = 0;
+            while (pos < arrayContent.Length)
+            {
+                int objStart = arrayContent.IndexOf('{', pos);
+                if (objStart == -1) break;
+
+                int objEnd = arrayContent.IndexOf('}', objStart);
+                if (objEnd == -1) break;
+
+                string obj = arrayContent.Substring(objStart, objEnd - objStart + 1);
+                string key = ParseField(obj, "key");
+                string value = ParseField(obj, "value");
+
+                if (!string.IsNullOrEmpty(key))
+                    result[key] = value;
+
+                pos = objEnd + 1;
+            }
+
+            return result;
         }
 
         public SCPEntry Get(string id) => _entries.TryGetValue(id.ToUpper(), out var entry) ? entry : null;

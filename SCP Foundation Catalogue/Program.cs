@@ -29,6 +29,7 @@ namespace SCP_Foundation_Catalogue
         static SCPRegistry registry = new SCPRegistry();
         private static void Main(string[] args)
         {
+            Directory.SetCurrentDirectory(Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"..\..\..")));
             Console.Write("\x1b[38;2;250;209;153m");
             Console.OutputEncoding = System.Text.Encoding.UTF8;
             registry.LoadAll(); //Load previous entries
@@ -116,7 +117,7 @@ namespace SCP_Foundation_Catalogue
         {
             Console.WriteLine($"System information as of {DateTime.Now:ddd MMM dd HH:mm:ss} UTC {DateTime.Now.Year}\n");
             Console.WriteLine($"{"Load:",-20} {"4.49",-20} {"Processes:",-25} 117");
-            Console.WriteLine($"{"Usage of H:/:",-20} {"2% of 39.48GB",-20} {"Users logged in:",-25} 1");
+            Console.WriteLine($"{"Usage of H:\\:",-20} {"2% of 39.48GB",-20} {"Users logged in:",-25} 1");
             Console.WriteLine($"{"Memory usage:",-20} {"40%",-20} {"Site:",-25} Site-19");
             Console.WriteLine($"{"Status:",-20} {"SECURE",-20} {"Clearance:",-25} Level 3");
             Console.WriteLine();
