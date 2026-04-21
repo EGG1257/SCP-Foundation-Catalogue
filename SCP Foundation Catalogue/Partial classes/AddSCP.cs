@@ -78,20 +78,21 @@ namespace SCP_Foundation_Catalogue
                     Console.WriteLine("Invalid input.");
             }
 
-            //for adding any number of addendums
+            //for adding any number of additional information.
+            //The reason it's called addendums is because it was originaly just for addendums but I repurposed it into any type of additional info
             bool addeBool = true;
             while (addeBool)
             {
                 string addeName;
                 string addeText;
-                Console.Write("Would you like to add an addendum (y/n)\n> ");//ask if user wants to add addendum
+                Console.Write("Would you like to add additional information (y/n)\n> ");//ask if user wants to add addendum
                 string adenYn = Console.ReadLine()?.Trim().ToLower();
 
                 if (adenYn == "y")//if yes ask for name and inards and then write those to the addendum dictionary
                 {
-                    Console.Write("What is the name of the addendum\n> ");
+                    Console.Write("What is the name of the additional information\n> ");
                     addeName = Console.ReadLine();
-                    addeText = ReadLocation("What is the addendum");
+                    addeText = ReadLocation("What is the additional information");
                     addendums.Add(addeName, addeText);//add to dictioanry
                 }
                 else if (adenYn == "n") addeBool = false;//if no break addendum loop

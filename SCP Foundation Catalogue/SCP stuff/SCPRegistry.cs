@@ -147,13 +147,12 @@ namespace SCP_Foundation_Catalogue
             int arrayStart = json.IndexOf(search);
             if (arrayStart == -1) return result;
 
-            // Find the closing ] of the addendums array
-            int arrayContentStart = arrayStart + search.Length;
-            int arrayEnd = json.IndexOf(']', arrayContentStart);
+            // `arrayOpenPos` points at the '[' that opens the array
+            int arrayOpenPos = arrayStart + search.Length - 1;
+            int arrayEnd = FindMatchingClose(json, arrayOpenPos, '[', ']');
             if (arrayEnd == -1) return result;
 
-            // Work only within the array's content so we don't wander into the outer object
-            string arrayContent = json.Substring(arrayContentStart, arrayEnd - arrayContentStart);
+            string arrayContent = json.Substring(arrayOpenPos + 1, arrayEnd - arrayOpenPos - 1);
 
             int pos = 0;
             while (pos < arrayContent.Length)
@@ -161,7 +160,8 @@ namespace SCP_Foundation_Catalogue
                 int objStart = arrayContent.IndexOf('{', pos);
                 if (objStart == -1) break;
 
-                int objEnd = arrayContent.IndexOf('}', objStart);
+                // Use FindMatchingClose so that '}' inside string values is ignored
+                int objEnd = FindMatchingClose(arrayContent, objStart, '{', '}');
                 if (objEnd == -1) break;
 
                 string obj = arrayContent.Substring(objStart, objEnd - objStart + 1);
@@ -175,6 +175,32 @@ namespace SCP_Foundation_Catalogue
             }
 
             return result;
+        }
+
+        private int FindMatchingClose(string json, int openPos, char open, char close)
+        {
+            int depth = 0;
+            bool inString = false;
+
+            for (int i = openPos; i < json.Length; i++)
+            {
+                if (inString)
+                {
+                    if (json[i] == '\\') { i++; continue; } // skip escaped char
+                    if (json[i] == '"') inString = false;
+                }
+                else
+                {
+                    if (json[i] == '"') { inString = true; continue; }
+                    if (json[i] == open) depth++;
+                    else if (json[i] == close)
+                    {
+                        depth--;
+                        if (depth == 0) return i;
+                    }
+                }
+            }
+            return -1;
         }
 
         public SCPEntry Get(string id) => _entries.TryGetValue(id.ToUpper(), out var entry) ? entry : null;

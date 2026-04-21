@@ -25,15 +25,16 @@ namespace SCP_Foundation_Catalogue
         {
             if (detailed)
                 ClearConsole();
-            Console.WriteLine($"\n  ┌─ {id}: {name}");
-            Console.WriteLine($"  │  Object Class: {objectClass}");
+            Console.WriteLine($"  ┌─ {id}: {name}");
+            
 
             if (detailed)//print the rest of the info if detailed is true
             {
+                Console.WriteLine($"  │  Object Class: {objectClass}");
                 Console.WriteLine("  │");
                 if (ContainmentProcedures != "")
                 {
-                    Console.WriteLine("  │  ┌─Special Containment Procedures:");
+                    Console.WriteLine("  │  ┌─ Special Containment Procedures:");
                     PrintBlock(ContainmentProcedures);
                     Console.WriteLine("  │  └─");
                 }
@@ -41,7 +42,7 @@ namespace SCP_Foundation_Catalogue
                 if (Description != "")
                 {
                     Console.WriteLine("  │");
-                    Console.WriteLine("  │  ┌─Description:");
+                    Console.WriteLine("  │  ┌─ Description:");
                     PrintBlock(Description);
                     Console.WriteLine("  │  └─");
                 }
@@ -51,7 +52,7 @@ namespace SCP_Foundation_Catalogue
                     foreach (KeyValuePair<string, string> entry in Addendums)
                     {
                         Console.WriteLine("  │");
-                        Console.WriteLine($"  │  ┌─ Addendum: {entry.Key}");
+                        Console.WriteLine($"  │  ┌─ {entry.Key}");
                         PrintBlock(entry.Value);
                         Console.WriteLine("  │  └─");
                     }
@@ -65,9 +66,9 @@ namespace SCP_Foundation_Catalogue
                         Console.WriteLine($"  │  │  {Path.GetFileName(file)}   →   {file}");
                     Console.WriteLine("  │  └─");
                 }
+                Console.WriteLine("  └─");
             }
 
-            Console.WriteLine("  └─");
         }
 
         //This is code I found online to allow the large paragraphs to print in a clean fasion that is easy to read.
